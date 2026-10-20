@@ -8,6 +8,12 @@ Engineered for resource-constrained embedded edge processing, the microarchitect
 
 ## 🏛️ Physical ASIC Implementation & Die Metrics
 
+<p align="center">
+  <img src="docs/physical_layout_klayout.png" alt="Physical ASIC Die Layout in KLayout (SkyWater 130nm)" width="750">
+  <br>
+  <em>Figure 1: Full-chip physical layout in KLayout showing standard cell rows, central multiplier/ALU congestion block, and horizontal power distribution (PDN) straps.</em>
+</p>
+
 The core was synthesized, placed, and routed using the automated **OpenLane RTL-to-GDSII flow** targeting the SkyWater 130nm open-source PDK.
 
 | Metric | Physical Measurement / Specification |
