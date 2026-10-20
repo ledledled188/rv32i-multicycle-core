@@ -1,0 +1,17 @@
+# Simulation outputs
+*.vvp
+*.vcd
+*.out
+*.log
+
+# Modelsim / Questa work directories
+work/
+*.qdb
+*.qpg
+*.qtl
+
+# OS & Editor artifacts
+.vscode/
+.idea/
+Thumbs.db
+[Dd]esktop.ini
