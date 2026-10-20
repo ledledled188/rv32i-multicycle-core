@@ -1,12 +1,39 @@
 # 32-Bit Multi-Cycle RISC-V Microcontroller Core (`RV32I_Zmmul` with Hardware CRC)
 
-A synthesizable 32-bit multi-cycle RISC-V processor core targeted for the **SkyWater 130nm CMOS PDK (sky130_fd_sc_hd)** via the automated OpenLane RTL-to-GDSII ASIC design flow.
+A synthesizable 32-bit multi-cycle RISC-V processor core hardened for the **SkyWater 130nm CMOS PDK (sky130_fd_sc_hd)** via the automated OpenLane RTL-to-GDSII ASIC design flow.
 
 Engineered for resource-constrained embedded edge processing, the microarchitecture maximizes silicon area efficiency through temporal hardware sharing across an **8-state finite state machine (FSM)**.
 
 ---
 
-## 🏛️ Microarchitecture & Resource Sharing
+## 🏛️ Physical ASIC Implementation & Die Metrics
+
+The core was synthesized, placed, and routed using the automated **OpenLane RTL-to-GDSII flow** targeting the SkyWater 130nm open-source PDK.
+
+| Metric | Physical Measurement / Specification |
+| :--- | :--- |
+| **Process Node** | SkyWater 130nm CMOS (`sky130_fd_sc_hd`) |
+| **Die Dimensions** | **$798.3\ \mu\text{m} \times 809.0\ \mu\text{m}$** ($0.798\text{ mm} \times 0.809\text{ mm}$) |
+| **Total Die Area** | **$0.646\text{ mm}^2$** (~size of two grains of table salt; >300 dies fit on a 5-cent coin) |
+| **Core Target Density** | **$37.0\%$** standard cell placement density |
+| **Clock Frequency / Period**| **$20.0\text{ MHz}$** ($50.0\text{ ns}$ target clock period) |
+| **Metal Stack** | 5-Metal Routing Stack (`met1` through `met5`) |
+| **Antenna Protection** | Diode Insertion Strategy 3 (`GRT_REPAIR_ANTENNAS = true`) |
+| **Tapeout Deliverable** | Tapeout-ready GDSII stream file (`openlane/top.gds.gz`) |
+
+### Inspecting the Physical Layout:
+The complete post-routing GDSII stream file is included in `openlane/top.gds.gz`. To view in [KLayout](https://www.klayout.de/):
+```bash
+# Decompress layout stream
+gzip -d openlane/top.gds.gz
+
+# Open in KLayout layout viewer
+klayout openlane/top.gds
+```
+
+---
+
+## ⚙️ Microarchitecture & Resource Sharing
 
 In contrast to single-cycle or pipelined designs that duplicate computational blocks, this multi-cycle architecture reuses a single 32-bit ALU across distinct execution phases:
 1. **Instruction Fetch & Program Counter Increment:** Computes $PC + 4$.
@@ -99,7 +126,7 @@ PASS: OFFICIAL VALIDATION FIRMWARE PASSED
 ## 📂 Repository Structure
 ```
 rv32i-multicycle-core/
-├── rtl/
+├── rtl/                        # Synthesizable Verilog modules
 │   ├── addr_decoder.v          # Memory space address decoder
 │   ├── alu.v                   # 32-bit arithmetic logic unit
 │   ├── basic_cpu.v             # Core top-level interconnect
@@ -114,16 +141,20 @@ rv32i-multicycle-core/
 │   ├── multiplier.v            # 32-bit hardware multiplier (Zmmul)
 │   ├── program_counter.v       # Program counter register
 │   └── reg_file.v              # 32x32 register file
-├── tb/
+├── openlane/                   # Physical ASIC hardening files
+│   ├── config.json             # OpenLane floorplan & synthesis settings
+│   ├── top.gds.gz              # Tapeout GDSII stream file (78 MB uncompressed)
+│   └── top.nl.v                # Post-routing gate-level netlist
+├── tb/                         # Unit testbenches
 │   ├── tb_basic_cpu_validation.v   # 952-cycle firmware validation TB
 │   ├── tb_basic_cpu_branch.v       # Branch verification TB
 │   ├── tb_basic_cpu_multiplier.v   # Hardware multiplier TB
 │   └── tb_basic_cpu_crc_special.v  # CRC hardware engine TB
-├── firmware/
+├── firmware/                   # Firmware binaries & sources
 │   ├── firmware_validation.hex     # 952-cycle validation binary
 │   └── firmware.s                  # Assembly verification source
 ├── sim/
-│   └── run_validation.bat          # One-click Windows simulation script
+│   └── run_validation.bat      # One-click Windows simulation script
 ├── .gitignore
 └── README.md
 ```
